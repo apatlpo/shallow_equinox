@@ -16,19 +16,10 @@ Once miniconda is installed, you can use the conda command to install any other 
 
 After downloading `Miniconda3-latest-Linux-x86_64.sh` or `Miniconda3-latest-MacOSX-x86_64.sh` you need to run it with: `bash Miniconda3-latest-MacOSX-x86_64.sh`
 
-Miniconda must be used with bash. If you want to use it with csh, add in your .cshrc (not ideal solution)
-
+Edit your `~/.cshrc` and add the following lines:
 ```
-#
-#----------------------------------------------------------------
-# alias Miniconda
-#----------------------------------------------------------------
-#
-setenv PATH ${PATH}: /home/machine/username/miniconda3/bin
-alias source_activate 'setenv OLDPATH ${PATH};setenv PATH /home/machine/username/miniconda3/envs/\!*/bin:${PATH}'
-alias source_deactivate 'setenv PATH $OLDPATH'
+source $HOME/.miniconda3/etc/profile.d/conda.csh
 ```
-where machine is the name of your computer and username is your username.
 
 
 ## Main commands:
