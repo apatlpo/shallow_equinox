@@ -13,7 +13,7 @@ Contains code that process mitgcm output for the EQUINOx project
 
 *Needs update*
 
-All scripts require python librairies that may be installed with conda according to the following instructions [here](https://github.com/apatlpo/shallow_equinox/blob/master/doc/CONDA.md)
+All scripts require python librairies that may be installed with conda according to the following instructions [here](https://github.com/apatlpo/shallow_equinox/blob/master/doc/install_datarmor.md)
 
 Dependencies
 

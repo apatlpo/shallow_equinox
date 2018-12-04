@@ -4,7 +4,10 @@
 
 ## Install mercurial
 
+Install conda, see [CONDA doc](https://github.com/apatlpo/shallow_equinox/blob/master/doc/conda.md)
+
 ```
+conda activate vacumm # load python 2.7
 pip install --user mercurial
 ```
 
@@ -12,7 +15,7 @@ Add in `~/.cshrc`:
 
 ```
 #..... pip --user install
-set pathifr = ($pathifr /home1/datahome/slgentil/.local/bin)
+set pathifr = ($pathifr $home/.local/bin)
 #..... path final
 set path = ($pathifr $path)
 ```
@@ -297,4 +300,4 @@ or:
 
 ```
 pip install hg+https://bitbucket.org/fluiddyn/fluidsim_ocean --no-cache-dir
-``
+```
