@@ -86,7 +86,7 @@ Install other libraries:
 pip install pythran --no-cache-dir
 pip install colorlog
 pip install mako						
-``
+```
 
 
 ## Config file for pythran:
