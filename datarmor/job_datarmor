@@ -1,0 +1,32 @@
+#!/bin/csh
+#PBS -q mpi
+#PBS -l select=1:ncpus=28:mpiprocs=28:mem=120G
+#PBS -l walltime=04:00:00
+
+# get the path for command module,mpirun
+source /usr/share/Modules/3.2.10/init/csh
+module purge
+module load intel-cc-18 mpt/2.17 gcc/5.3.0
+
+set FLUIDPATH=fluidsim
+conda activate $FLUIDPATH
+setenv LD_LIBRARY_PATH $HOME/lib/fftw/3.3.7/lib:$LD_LIBRARY_PATH
+setenv LD_LIBRARY_PATH $HOME/lib/hdf5/1.10.2/lib:$LD_LIBRARY_PATH
+setenv LD_LIBRARY_PATH $HOME/.miniconda2/envs/$FLUIDPATH/lib:$LD_LIBRARY_PATH
+setenv C_INCLUDE_PATH $HOME/lib/fftw/3.3.7/include:$C_INCLUDE_PATH
+setenv C_INCLUDE_PATH $HOME/lib/hdf5/1.10.2/include:$C_INCLUDE_PATH
+setenv C_INCLUDE_PATH $HOME/.miniconda2/envs/$FLUIDPATH/include:$C_INCLUDE_PATH
+
+# cd to the directory you submitted your job
+cd $PBS_O_WORKDIR
+
+# env output data
+mkdir -p data
+setenv FLUIDSIM_PATH $PBS_O_WORKDIR/data
+
+# test_forcing 
+# launch batch with "qsub -N job_name job_datarmor"
+$MPI_LAUNCH -n 8 python -u test_forcing.py  >& output.mpi
+#$MPI_LAUNCH -n 8 python -u test_forcing_restart.py  >& output.mpi
+
+
