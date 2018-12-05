@@ -20,7 +20,7 @@ set pathifr = ($pathifr $home/.local/bin)
 set path = ($pathifr $path)
 ```
 
-## Environment compiler
+## Compiler environment 
 
 ```
 module purge
@@ -29,13 +29,14 @@ module purge
 Without mkl (recommended):
 
 ```
-	module load intel-cc-18 mpt/2.17  gcc/5.3.0
+module load intel-cc-18 mpt/2.17  gcc/5.3.0
+
 ```
 
 With mkl (no parallel fft possible then):
 
 ```
-	module load intel-cc-18 mpt/2.17 intel-cmkl-18 gcc/5.3.0     (with intel-numpy)
+module load intel-cc-18 mpt/2.17 intel-cmkl-18 gcc/5.3.0  # (with intel-numpy)
 ```
 
 Adjust several environment variables:
@@ -63,24 +64,24 @@ Install mpi4py with pip such that mpi4py works with MPT (SGI MPI)
 pip install mpi4py --no-deps --no-cache-dir --no-binary mpi4py
 ```
 
-Without mkl (recommended):
+Without mkl (recommended, *beware: blas version is fixed to 1.0*):
 
 ```
-	conda install -y numpy matplotlib h5py blas=*=openblas	(bash)
-	conda install -y scipy pandas ipython cython psutil
+conda install -y numpy matplotlib h5py blas=1.0=openblas
+conda install -y scipy pandas ipython cython psutil
 ```
 
-With mkl (no parallel fft possible then):
+or with mkl (no parallel fft possible then):
 
 ```
-	pip install intel-numpy --no-cache-dir
-	pip install matplotlib
-	pip install h5py
-	pip install intel-scipy --no-cache-dir
-	pip install pandas
-	pip install ipython
-	pip install cython
-	pip install psutil
+pip install intel-numpy --no-cache-dir
+pip install matplotlib
+pip install h5py
+pip install intel-scipy --no-cache-dir
+pip install pandas
+pip install ipython
+pip install cython
+pip install psutil
 ```
 
 Install other libraries:
@@ -88,7 +89,7 @@ Install other libraries:
 ```
 pip install pythran --no-cache-dir
 pip install colorlog
-pip install mako						
+pip install mako
 ```
 
 
@@ -103,25 +104,36 @@ vi ~/.pythranrc
 And copy/paste:
 
 ```
-	[compiler]
-	CC=gcc
-	CXX=g++
+[compiler]
+CC=gcc
+CXX=g++
 
-	[pythran]
-	complex_hook = True
+[pythran]
+complex_hook = True
 ```
 
 ## Install hdf5 parallel
 
 ```
+mkdir -p $HOME/lib
 cd $HOME/lib
-wget https://support.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.10.2.tar.gz
-tar -zxf hdf5-1.10.2.tar.gz
-cd hdf5-1.10.2
-set PREFIX=$HOME/lib/hdf5/1.10.2
+```
+
+Go with your browser to [HD5 current source webpage](https://support.hdfgroup.org/ftp/HDF5/current/src/).
+Search for the appropriate version number and update lines below 
+accordingly:
+
+```
+wget https://support.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.10.4.tar.gz
+tar -zxf hdf5-1.10.4.tar.gz
+cd hdf5-1.10.4
+set PREFIX=$HOME/lib/hdf5/1.10.4
 mkdir -p $PREFIX
 ./configure --enable-parallel --prefix=$PREFIX
 make -j 4 && make install
+# ../libtool: line 1762: warning: setlocale: LC_CTYPE: cannot change locale (UTF-8)
+setenv LD_LIBRARY_PATH $HOME/lib/hdf5/1.10.4/lib:$LD_LIBRARY_PATH
+setenv C_INCLUDE_PATH $HOME/lib/hdf5/1.10.4/include:$C_INCLUDE_PATH
 ```
 
 
@@ -158,16 +170,16 @@ make -j 4 && make install
 ```
 set FLUIDPATH=fluidsim
 setenv LD_LIBRARY_PATH $HOME/lib/fftw/3.3.7/lib:$LD_LIBRARY_PATH
-setenv LD_LIBRARY_PATH $HOME/lib/hdf5/1.10.2/lib:$LD_LIBRARY_PATH
 setenv LD_LIBRARY_PATH $HOME/.miniconda2/envs/$FLUIDPATH/lib:$LD_LIBRARY_PATH
 setenv C_INCLUDE_PATH $HOME/lib/fftw/3.3.7/include:$C_INCLUDE_PATH
-setenv C_INCLUDE_PATH $HOME/lib/hdf5/1.10.2/include:$C_INCLUDE_PATH
 setenv C_INCLUDE_PATH $HOME/.miniconda2/envs/$FLUIDPATH/include:$C_INCLUDE_PATH
 ```
 
 ## Installation fluiddyn
 
-Tester sans
+**AP: Tester sans cette partie**
+
+With pip:
 
 ```
 pip install hg+https://bitbucket.org/fluiddyn/fluiddyn --no-cache-dir
@@ -187,55 +199,56 @@ make
 Create a config file:
 
 ```
+cd
 vi .fluidfft-site.cfg
 ```
 
 and copy/paste:
 
 ```
-		[fftw3]
-		use = True
-		dir = ~/lib/fftw/3.3.7
-		include_dir = ~/lib/fftw/3.3.7/include
-		library_dir = ~/lib/fftw/3.3.7/lib
+[fftw3]
+use = True
+dir = ~/lib/fftw/3.3.7
+include_dir = ~/lib/fftw/3.3.7/include
+library_dir = ~/lib/fftw/3.3.7/lib
 
-		[fftw3_mpi]
-		use = True
-		dir = $HOME/lib/fftw/3.3.7
-		include_dir = $HOME/lib/fftw/3.3.7/include
-		library_dir = $HOME/lib/fftw/3.3.7/lib
+[fftw3_mpi]
+use = True
+dir = ~/lib/fftw/3.3.7
+include_dir = ~/lib/fftw/3.3.7/include
+library_dir = ~/lib/fftw/3.3.7/lib
 
-		[cufft]
-		use = False
-		dir =
-		include_dir =
-		library_dir =
+[cufft]
+use = False
+dir =
+include_dir =
+library_dir =
 
-		[pfft]
-		use = False
-		dir =
-		include_dir =
-		library_dir =
+[pfft]
+use = False
+dir =
+include_dir =
+library_dir =
 
-		[p3dfft]
-		use = False
-		dir =
-		include_dir =
-		library_dir =
+[p3dfft]
+use = False
+dir =
+include_dir =
+library_dir =
 
-		[environ]
-		## Uncomment and specify the following libions to modify compilation of
-		## extensions.
+[environ]
+## Uncomment and specify the following libions to modify compilation of
+## extensions.
 
-		## To modify compiler used to build Cython extensions:
-		# MPICXX =
-		# LDSHARED =
+## To modify compiler used to build Cython extensions:
+# MPICXX =
+# LDSHARED =
 
-		## To modify target architecture while building Pythran extensions
-		## Useful when cross-compiling. See whether it is required by comparing:
-		## 	gcc -march=native -Q --help=target
-		## 	gcc -march=$CARCH -Q --help=target
-		# CARCH =
+## To modify target architecture while building Pythran extensions
+## Useful when cross-compiling. See whether it is required by comparing:
+## gcc -march=native -Q --help=target
+## gcc -march=$CARCH -Q --help=target
+# CARCH =
 ```
 
 Recommended:
@@ -273,6 +286,8 @@ fluidsim.solvers.sw1l = False
 Recommended:
 
 ```
+pip install fluidpythran --no-cache-dir
+pip install pyFFTW==0.10.4 # temporary, waiting for 0.11.0 install to be fixed
 hg clone https://bitbucket.org/fluiddyn/fluidsim
 cd fluidsim
 hg up master
