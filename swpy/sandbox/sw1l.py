@@ -12,7 +12,7 @@ Future work:
 - use spectral space to compute derivates but time step in physical space
 
 To run the code:
-mpirun -n 4 python sw1l.py
+mpirun -n 4 python -u sw1l.py
 
 https://mpi4py-fft.readthedocs.io/en/latest/io.html
 """
@@ -29,7 +29,7 @@ day2sec = 86400.
 T = 1. * day2sec
 dt = 1.e0
 g = 9.8
-
+plot = False
 
 # Set global size of the computational box
 M = 10
@@ -70,7 +70,7 @@ UH_pad = Function(FFT_pad, False, tensor=2)
 def get_local_mesh(FFT, L):
     """Returns local mesh."""
     X = np.ogrid[FFT.local_slice(False)]
-    N = FFT.input_shape()
+    N = FFT.shape()
     for i in range(len(N)):
         X[i] = (X[i]*L[i]/N[i])
     X = [np.broadcast_to(x, FFT.local_shape(False)) for x in X]
@@ -80,7 +80,7 @@ def get_local_wavenumbermesh(FFT, L):
     """Returns local wavenumber mesh."""
 
     s = FFT.local_slice()
-    N = FFT.input_shape()
+    N = FFT.shape()
 
     # Set wavenumbers in grid
     k = [np.fft.fftfreq(n, 1./n).astype(int) for n in N[:-1]]
@@ -171,11 +171,11 @@ while t < T-1e-8:
     H = FFT.backward(H_hat, H)
     for i in range(2):
         U[i] = FFT.backward(U_hat[i], U[i])
-    #k = MPI.COMM_WORLD.reduce(sum(U*U)/N[0]/N[1]/2)
+    k = MPI.COMM_WORLD.reduce(np.sum(U[0]*U[0])/N[0]/N[1]/2)
     if MPI.COMM_WORLD.Get_rank() == 0:
-        #print("Energy = {}".format(k))
+        print("Energy = {}".format(k))
         print("t = {}".format(t))
-    if np.mod(tstep,100)==0:
+    if plot and np.mod(tstep,100)==0:
         plt.figure()
         plt.imshow(H-4000.)
         plt.colorbar()
