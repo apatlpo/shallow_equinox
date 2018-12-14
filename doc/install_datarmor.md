@@ -22,26 +22,14 @@ set path = ($pathifr $path)
 
 ## Compiler environment 
 
+Load the compiler and adjust environment:
+
 ```
 module purge
-```
-
-Without mkl (recommended):
-
-```
+: without mkl
 module load intel-cc-18 mpt/2.17  gcc/5.3.0
-
-```
-
-With mkl (no parallel fft possible then):
-
-```
-module load intel-cc-18 mpt/2.17 intel-cmkl-18 gcc/5.3.0  # (with intel-numpy)
-```
-
-Adjust several environment variables:
-
-```
+: with mkl
+: module load intel-cc-18 mpt/2.17 intel-cmkl-18 gcc/5.3.0
 setenv MPICC_CC icc
 setenv MPICXX_CXX icpc
 setenv MPI_PATH $MPI_ROOT
@@ -87,6 +75,7 @@ pip install psutil
 Install other libraries:
 
 ```
+setenv LC_ALL en_US.UTF-8
 pip install pythran --no-cache-dir
 pip install colorlog
 pip install mako
@@ -287,11 +276,12 @@ Recommended:
 
 ```
 pip install fluidpythran --no-cache-dir
-pip install pyFFTW==0.10.4 # temporary, waiting for 0.11.0 install to be fixed
+pip install pyFFTW==0.10.4
+: temporary, waiting for 0.11.0 install to be fixed
 hg clone https://bitbucket.org/fluiddyn/fluidsim
 cd fluidsim
 hg up master
-make
+make develop
 ```
 
 or:
@@ -308,7 +298,7 @@ Recommended:
 ```
 hg clone https://bitbucket.org/fluiddyn/fluidsim_ocean
 cd fluidsim_ocean
-make
+make develop
 ```
 
 or:
